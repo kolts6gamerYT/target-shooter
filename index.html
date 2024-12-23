@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Target Shooter</title>
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+}
+#gameContainer {
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+    position: relative;
+}
+#target {
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    position: absolute;
+}
+#player {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+</style>
+</head>
+<body>
+
+<div id="gameContainer"></div>
+<script>
+const gameContainer = document.getElementById('gameContainer');
+const target = document.getElementById('target');
+const player = document.getElementById('player');
+
+let targetX, targetY;
+let playerX = gameContainer.offsetWidth / 2;
+let level = 1;
+let score = 0;
+
+function createTarget() {
+    targetX = Math.random() * (gameContainer.offsetWidth - target.offsetWidth);
+    targetY = Math.random() * (gameContainer.offsetHeight - target.offsetHeight);
+    target.style.left = targetX + 'px';
+    target.style.top = targetY + 'px';
+}
+
+function checkCollision() {
+    if (
+        playerX >= targetX &&
+        playerX <= targetX + target.offsetWidth &&
+        0 <= playerY &&
+        playerY <= targetY + target.offsetHeight
+    ) {
+        score++;
+        createTarget();
+        levelUp();
+    }
+}
+
+function levelUp() {
+    if (score % 10 === 0) {
+        level++;
+        document.getElementById('level').textContent = `Level: ${level}`;
+    }
+}
+
+function gameLoop() {
+    checkCollision();
+    requestAnimationFrame(gameLoop);
+}
+
+// Event listener for player movement
+document.addEventListener('mousemove', (event) => {
+    playerX = event.clientX - gameContainer.offsetLeft;
+    player.style.left = playerX + 'px';
+});
+
+// Create initial target and start the game
+createTarget();
+gameLoop();
+
+// Display initial level
+document.body.innerHTML += `<h1>Level: ${level}</h1>`;
+document.body.innerHTML += `<h2>Score: ${score}</h2>`;
+
+</script>
+
+</body>
+</html>
